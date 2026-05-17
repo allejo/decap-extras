@@ -240,12 +240,11 @@ export type PropsByCollectionAndFile<
 	C extends CollectionNames<TConfig>,
 	F extends CollectionItemNames<TConfig, C>,
 > = IDE_HACK_ExpandRecursiveType<
-	FieldsOfFile<
-		FileByName<
-			CollectionByName<TConfig, C> & { files: readonly unknown[] },
-			F & string
-		>
-	>
+	CollectionByName<TConfig, C> extends {
+		files: infer Files extends readonly unknown[];
+	}
+		? FieldsOfFile<FileByName<{ files: Files }, F & string>>
+		: never
 >;
 
 type WidgetFactory = (...args: any[]) => CmsField;
