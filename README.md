@@ -229,9 +229,26 @@ type SeoWidget = WidgetTypeFromFactory<typeof seoWidget>;
 // { metaTitle: string; metaDescription?: string }
 ```
 
----
+#### Constraining to valid file names
 
-## API reference
+Use `CollectionItemNames` to get a union of all file name literals for a collection. This is useful for constraining generic components or functions that accept a page name.
+
+```ts
+import type { CollectionItemNames } from '@allejo/decap-extras';
+
+import type { config } from '@/cms/config';
+
+type PageName = CollectionItemNames<typeof config, 'pages'>;
+// "home" | "about" | ...
+
+function getPageProps<F extends PageName>(
+	page: F,
+): PropsByCollectionAndFile<typeof config, 'pages', F> {
+	// ...
+}
+```
+
+---
 
 ### Widget functions
 
@@ -261,6 +278,7 @@ type SeoWidget = WidgetTypeFromFactory<typeof seoWidget>;
 | Type                                      | Description                                                                          |
 | ----------------------------------------- | ------------------------------------------------------------------------------------ |
 | `PropsByCollectionAndFile<TConfig, C, F>` | Derives a typed content object from a CMS config for collection `C` and file `F`.    |
+| `CollectionItemNames<TConfig, C>`         | Union of all file name literals defined in collection `C`.                           |
 | `WidgetTypeFromFactory<F>`                | Returns the TypeScript content type produced by a widget factory function `F`.       |
 | `OptionalWidget<T>`                       | Brands a `CmsField` as optional (added by `optional()`).                             |
 | `WidgetOpts<T>`                           | The options type for a given widget field type, with `widget` and `fields` stripped. |

@@ -216,7 +216,7 @@ type TypeScriptTypeForField<F extends CmsField> = F['widget'] extends
  * `CollectionItemNames<Config, "pages">` would resolve to the union of all
  * file names defined in the "Pages" collection, such as `"home" | "about" | ...`.
  */
-type CollectionItemNames<
+export type CollectionItemNames<
 	TConfig extends { collections: readonly unknown[] },
 	C extends CollectionNames<TConfig>,
 > =
