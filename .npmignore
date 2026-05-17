@@ -1,0 +1,13 @@
+!dist/
+
+*.tgz
+/*.ts
+/*.js
+
+.editorconfig
+.prettierignore
+tsconfig.json
+
+.idea/
+.vscode/
+src/
