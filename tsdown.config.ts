@@ -23,6 +23,8 @@ export default {
 		neverBundle: [
 			// Don't bundle dependencies
 			...Object.keys(pkg?.dependencies ?? {}),
+			...Object.keys(pkg?.devDependencies ?? {}),
+			...Object.keys(pkg?.peerDependencies ?? {}),
 
 			// Don't bundle built-in Node.js modules (use protocol imports!)
 			/^node:.*/,

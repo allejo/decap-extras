@@ -1,3 +1,7 @@
-export function add(a: number, b: number) {
-	return a + b;
-}
+export type {
+	PropsByCollectionAndFile,
+	WidgetOpts,
+	OptionalWidget,
+	WidgetTypeFromFactory,
+} from './api.js';
+export * from './widgets.js';

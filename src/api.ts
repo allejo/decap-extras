@@ -1,4 +1,4 @@
-import { CmsField } from 'decap-cms-core';
+import type { CmsField } from 'decap-cms-core';
 
 /**
  * Get a widget's options while excluding keys we're handling (i.e., `widget`,
@@ -133,7 +133,7 @@ type FileByName<
 type CmsCollectionFile = {
 	name: string;
 	file: string;
-	fields: CmsField[];
+	fields: readonly CmsField[];
 };
 
 /**

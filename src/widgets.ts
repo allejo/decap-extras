@@ -1,4 +1,4 @@
-import {
+import type {
 	CmsField,
 	CmsFieldBoolean,
 	CmsFieldFileOrImage,
@@ -10,7 +10,7 @@ import {
 	CmsFieldStringOrText,
 } from 'decap-cms-core';
 
-import { OptionalWidget, WidgetOpts } from './api.js';
+import type { OptionalWidget, WidgetOpts } from './api.js';
 
 function customStringWidget<T extends string>(
 	widget: string,
