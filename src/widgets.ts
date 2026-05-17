@@ -12,18 +12,6 @@ import type {
 
 import type { OptionalWidget, WidgetOpts } from './api.js';
 
-function customStringWidget<T extends string>(
-	widget: string,
-	label: string,
-	name: T,
-) {
-	return {
-		label,
-		name,
-		widget: widget as 'string',
-	} as const satisfies CmsField;
-}
-
 // Widget Modifiers
 
 export function optional<T extends CmsField>(widget: T): OptionalWidget<T> {
@@ -143,10 +131,6 @@ export function numberWidget<T extends string>(
 		widget: 'number',
 		...(options ?? {}),
 	} as const satisfies CmsField;
-}
-
-export function phoneWidget<T extends string>(label: string, name: T) {
-	return customStringWidget('phone', label, name);
 }
 
 export function selectWidget<T extends string, O extends string[]>(
