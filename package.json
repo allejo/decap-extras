@@ -1,13 +1,13 @@
 {
 	"name": "@allejo/decap-extras",
 	"version": "0.0.0",
-	"description": "",
+	"description": "A TypeScript utility library for Decap CMS with utility types to derive types from Decap CMS configuration files.",
 	"keywords": [
 		"decapcms"
 	],
 	"repository": {
 		"type": "git",
-		"url": "github.com/allejo/decap-extras"
+		"url": "https://github.com/allejo/decap-extras"
 	},
 	"license": "MIT",
 	"author": "Vladimir \"allejo\" Jimenez",
