@@ -1,6 +1,6 @@
 {
 	"name": "@allejo/decap-extras",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "A TypeScript utility library for Decap CMS with utility types to derive types from Decap CMS configuration files.",
 	"keywords": [
 		"decapcms"
@@ -12,8 +12,16 @@
 	"license": "MIT",
 	"author": "Vladimir \"allejo\" Jimenez",
 	"type": "module",
-	"main": "./dist/index.mjs",
-	"types": "./dist/index.d.mts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.mts",
+			"import": "./dist/index.mjs"
+		},
+		"./server": {
+			"types": "./dist/server.d.mts",
+			"import": "./dist/server.mjs"
+		}
+	},
 	"scripts": {
 		"build": "tsdown",
 		"format": "prettier --write .",
