@@ -7,7 +7,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/allejo/decap-extras"
+		"url": "git+https://github.com/allejo/decap-extras.git"
 	},
 	"license": "MIT",
 	"author": "Vladimir \"allejo\" Jimenez",
