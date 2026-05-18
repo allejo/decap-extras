@@ -250,6 +250,49 @@ function getPageProps<F extends PageName>(
 
 ---
 
+## Server utilities
+
+A server-side utility for getting CSS from Next.js build manifests. This is useful for registering CSS stylesheets into Decap's CMS preview system.
+
+```ts
+import { getCssFilesFromManifest } from '@allejo/decap-extras/server';
+```
+
+Use `getCssFilesFromManifest` in `getStaticProps` to collect the CSS paths needed by your page and pass them as props:
+
+```ts
+export async function getStaticProps() {
+	const cssFiles = getCssFilesFromManifest(process.env.NODE_ENV, [
+		'/',
+		'/_app',
+	]);
+
+	return {
+		props: {
+			cssFiles: cssFiles['flattenedCssFiles'],
+		},
+	};
+}
+```
+
+Then register each path as a preview stylesheet in your Decap CMS admin component:
+
+```ts
+export default function Admin({ cssFiles }: Props) {
+	// ...
+
+	cssFiles.forEach((css) => {
+		cms.registerPreviewStyle(css);
+	});
+}
+```
+
+> **Note:** This utility reads `.next/build-manifest.json` (or `.next/dev/build-manifest.json` in development) and is intended for Next.js projects only.
+
+---
+
+## API reference
+
 ### Widget functions
 
 | Function                                     | Decap widget                                                   | TypeScript type           |
@@ -282,6 +325,12 @@ function getPageProps<F extends PageName>(
 | `WidgetTypeFromFactory<F>`                | Returns the TypeScript content type produced by a widget factory function `F`.       |
 | `OptionalWidget<T>`                       | Brands a `CmsField` as optional (added by `optional()`).                             |
 | `WidgetOpts<T>`                           | The options type for a given widget field type, with `widget` and `fields` stripped. |
+
+### Server utilities
+
+| Function                              | Description                                                                                                                                                              |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `getCssFilesFromManifest(env, pages)` | Reads the Next.js build manifest and returns CSS paths for the given page routes, grouped by page (`allCssFiles`) and as a deduplicated flat list (`flattenedCssFiles`). |
 
 ## License
 
