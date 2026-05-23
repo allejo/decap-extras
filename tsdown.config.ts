@@ -7,7 +7,7 @@ const pkg = require('./package.json') as PackageJson;
 export default {
 	treeshake: true,
 	splitting: true,
-	entry: ['src/index.ts', 'src/server.ts'],
+	entry: ['src/index.ts', 'src/react/index.ts', 'src/next/index.ts'],
 	target: 'esnext',
 	format: ['esm'],
 	dts: true,

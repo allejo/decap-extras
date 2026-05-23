@@ -17,9 +17,13 @@
 			"types": "./dist/index.d.mts",
 			"import": "./dist/index.mjs"
 		},
-		"./server": {
-			"types": "./dist/server.d.mts",
-			"import": "./dist/server.mjs"
+		"./react": {
+			"types": "./dist/react/index.d.mts",
+			"import": "./dist/react/index.mjs"
+		},
+		"./next": {
+			"types": "./dist/next/index.d.mts",
+			"import": "./dist/next/index.mjs"
 		}
 	},
 	"scripts": {
@@ -43,11 +47,13 @@
 		"husky": "^9.0.10",
 		"lint-staged": "^15.4.3",
 		"prettier": "^3.1.1",
+		"react": "^19.2.6",
 		"tsdown": "^0.22.0",
 		"typescript": "^5.9.3",
 		"vitest": "^3.2.4"
 	},
 	"peerDependencies": {
-		"decap-cms-core": "^3.12.2"
+		"decap-cms-core": "^3.12.2",
+		"react": "16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
 	}
 }

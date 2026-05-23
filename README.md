@@ -248,14 +248,172 @@ function getPageProps<F extends PageName>(
 }
 ```
 
----
+## React Integration
+
+Decap CMS is distributed either as [a single `.js` bundle you can load in an HTML file with `<script>` or as an ESM module you can import](https://decapcms.org/docs/install-decap-cms/). In order to integrate type-safety into working with Decap, we want to incorporate Decap CMS as a Next.js page so that we can get all the type-safety from working within it as a framework. There's one small problem with this though...
+
+> You can also use Decap CMS as an npm module. Wherever you import Decap CMS, it automatically runs, taking over the current page.
+
+This means, we can't just import Decap CMS in a Next.js page and call it a day. This is because at build time, Next.js will run the code in the page to generate the static HTML, and if Decap CMS is imported and initialized at that time, it's going to try to take over the page during the build process, which is not what we want. We only want Decap CMS to take over the page when it's running in the browser.
+
+To work around this, we can use [dynamic imports (i.e., `import()`)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import) inside a `useEffect` hook to initialize Decap CMS only on the client after the Next.js boilerplate has rendered and allow the CMS instance to take over the page.
+
+```tsx
+useEffect(() => {
+	Promise.all([
+		import('decap-cms-app'),
+
+		// You can import other Decap CMS modules
+		// import('decap-cms-media-library-cloudinary')
+	]).then(([cmsMod /*, cloudinaryMod*/]) => {
+		const cms = cmsMod.default;
+		const cloudinary = cloudinaryMod.default;
+
+		cms.init({ config });
+
+		// ...
+		// cms.registerPreviewStyle(...)
+		// cms.registerPreviewTemplate(...);
+		// cms.registerWidget(...);
+		// cms.registerMediaLibrary(cloudinary);
+	});
+}, []);
+```
+
+> The import() syntax, commonly called dynamic import, is a function-like expression that allows loading an ECMAScript module asynchronously and dynamically into a potentially non-module environment.
+
+Is there a more elegant solution to this problem? I'm not sure! If you can think of one, I would gladly welcome the idea.
+
+But knowing all of this and setting it up gets tedious and boilerplate-y really fast. So, in this package, we export a React component called `DecapInstance` that abstracts away all of this dynamic importing and initialization logic, so you can just use it as a wrapper around your admin page and pass in your config, preview styles, templates, widgets, and Cloudinary flag as props.
+
+### The `<DecapInstance />` Component
+
+We provide a React component called `DecapInstance` that handles the dynamic import and initialization of Decap CMS for you.
+
+```tsx
+import type { PropsByCollectionAndFile } from '@allejo/decap-extras';
+import { getCssFilesFromManifest } from '@allejo/decap-extras/next';
+import { DecapInstance } from '@allejo/decap-extras/react';
+import type { ComponentType } from 'react';
+
+import type { cmsConfig } from '@/cms/config';
+
+// The HomePageProps type and HomePreview component are normally imported from
+// other files, but are included here inline for demonstration purposes.
+type HomePageProps = PropsByCollectionAndFile<
+	typeof cmsConfig,
+	'pages',
+	'home'
+>;
+function HomePreview(props: HomePageProps) {
+	return (
+		<article>
+			<h1>{props.title}</h1>
+			{props.subtitle ? <p>{props.subtitle}</p> : null}
+		</article>
+	);
+}
+
+type AdminProps = {
+	cssFiles: string[];
+};
+
+export async function getStaticProps() {
+	const css = getCssFilesFromManifest(process.env.NODE_ENV ?? 'development', [
+		'/',
+		'/_app',
+	]);
+
+	return {
+		props: {
+			cssFiles: css.flattenedCssFiles,
+		},
+	};
+}
+
+export default function Admin({ cssFiles }: AdminProps) {
+	return (
+		<DecapInstance
+			config={cmsConfig}
+			cssFiles={cssFiles}
+			// Pass explicitly so media-library behavior is visible in admin setup.
+			useCloudinary={true}
+			pages={{
+				home: HomePreview as unknown as ComponentType<never>,
+			}}
+			widgets={{}}
+			onInit={(cms) => {
+				console.log('Decap initialized', cms);
+			}}
+		/>
+	);
+}
+```
+
+### How it Works
+
+`getCssFilesFromManifest` reads Next.js's `.next/build-manifest.json` at build time and returns all CSS files associated with the `/` and `/_app` routes. These are passed as props to the admin page so that we can [register the CSS files into Decap's preview functionality](https://decapcms.org/docs/customization/#registerpreviewstyle).
+
+```ts
+export async function getStaticProps() {
+	const cssFiles = getCssFilesFromManifest(process.env.NODE_ENV, [
+		'/',
+		'/_app',
+	]);
+	return { props: { cssFiles: cssFiles['flattenedCssFiles'] } };
+}
+```
+
+> [!WARNING]
+>
+> This is a bit of a hacky solution to get the CSS files and therefore has some known issues.
+>
+> The CSS for a page might not exist during local development because Next.js only generates the build manifest as the pages are requested. Therefore, if launch `next dev` and immediately open the admin page, the CSS files won't be found for the homepage (i.e., `/`) and won't be registered in the CMS preview, resulting in an unstyled preview. To work around this, you can either visit the homepage first to trigger the generation of the CSS files in the manifest, or run `next build` to generate the manifest with all CSS files before running `next dev`. During local development, this function will check the dev manifest at `.next/dev/build-manifest.json` first, and fallback to the regular manifest at `.next/build-manifest.json` if the dev manifest doesn't exist, so it should work in either case as long as the CSS files have been recorded.
+>
+> If you have a better idea of handling this, please reach out!
+
+#### Initialization sequence inside `useEffect`
+
+```ts
+cms.init({ config });
+```
+
+Bootstraps the CMS with the config from `src/cms/config.ts`.
+
+```ts
+cssFiles.forEach((css) => cms.registerPreviewStyle(css));
+```
+
+Registers every collected CSS file with the CMS preview panel so the editor renders with production styles.
+
+> [!WARNING]
+>
+> **FIXME**: There HAS to be a better way of handling this so that we only load the relevant stylesheets for specific previews. I'm not sure how to solve this yet, but I'll come back to it.
+
+```ts
+cms.registerPreviewTemplate(pageId, ({ entry }) => {
+  return <Component {...entry.get('data').toJSON()} />;
+});
+```
+
+Maps each CMS page entry (`home`, etc.) to its real Next.js page component, passing the editor's live data as props. Editors see the actual production component rendering their changes in real time.
+
+```ts
+cms.registerMediaLibrary(cloudinary);
+```
+
+Registers the Cloudinary media picker.
+
+> [!WARNING]
+>
+> Being able to _disable_ Cloudinary is a work-in-progress. I've always needed it for the projects I'm building so it's enabled by default. I'll get to respecting the "disable" environment variable... eventually.
 
 ## Server utilities
 
 A server-side utility for getting CSS from Next.js build manifests. This is useful for registering CSS stylesheets into Decap's CMS preview system.
 
 ```ts
-import { getCssFilesFromManifest } from '@allejo/decap-extras/server';
+import { getCssFilesFromManifest } from '@allejo/decap-extras/next';
 ```
 
 Use `getCssFilesFromManifest` in `getStaticProps` to collect the CSS paths needed by your page and pass them as props:
@@ -331,6 +489,13 @@ export default function Admin({ cssFiles }: Props) {
 | Function                              | Description                                                                                                                                                              |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `getCssFilesFromManifest(env, pages)` | Reads the Next.js build manifest and returns CSS paths for the given page routes, grouped by page (`allCssFiles`) and as a deduplicated flat list (`flattenedCssFiles`). |
+
+### React utilities
+
+| Type/Function        | Description                                                                                                                                              |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DecapInstance`      | React component that initializes Decap CMS, registers preview CSS/templates/widgets, optionally enables Cloudinary, and returns `null` after setup.      |
+| `DecapInstanceProps` | Props contract for `DecapInstance`, including config, preview CSS paths, page template registry, widget registry, and optional `onInit`/`useCloudinary`. |
 
 ## License
 
