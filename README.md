@@ -414,7 +414,7 @@ Registers the Cloudinary media picker.
 >
 > Being able to _disable_ Cloudinary is a work-in-progress. I've always needed it for the projects I'm building so it's enabled by default. I'll get to respecting the "disable" environment variable... eventually.
 
-## Server utilities
+## Next.js utilities
 
 A server-side utility for getting CSS from Next.js build manifests. This is useful for registering CSS stylesheets into Decap's CMS preview system.
 
@@ -451,9 +451,6 @@ export default function Admin({ cssFiles }: Props) {
 }
 ```
 
-> **Note:** This utility reads `.next/build-manifest.json` (or `.next/dev/build-manifest.json` in development) and is intended for Next.js projects only.
-
----
 
 ## API reference
 
