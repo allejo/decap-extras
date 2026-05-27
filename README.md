@@ -141,8 +141,6 @@ const slugField = stringWidget('Slug', 'slug', {
 });
 ```
 
----
-
 ### Type inference
 
 Define your CMS config using the widget factories and `as const`, then let `PropsByCollectionAndFile` derive a fully typed content object from it automatically.
