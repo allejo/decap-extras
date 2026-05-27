@@ -13,7 +13,7 @@
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
 		"preserveWatchOutput": true,
-		"jsx": "preserve",
+		"jsx": "react-jsx",
 		"skipLibCheck": true,
 		"strict": true,
 		"strictNullChecks": true,

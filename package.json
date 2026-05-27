@@ -43,6 +43,7 @@
 		"@types/eslint": "^8.44.7",
 		"@types/node": "^24.12.4",
 		"decap-cms-app": "^3.12.2",
+		"decap-cms-media-library-cloudinary": "^3.1.0",
 		"eslint": "^9.21.0",
 		"husky": "^9.0.10",
 		"lint-staged": "^15.4.3",
@@ -54,6 +55,7 @@
 	},
 	"peerDependencies": {
 		"decap-cms-core": "^3.12.2",
+		"decap-cms-media-library-cloudinary": "^3.1.0",
 		"react": "16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
 	}
 }
