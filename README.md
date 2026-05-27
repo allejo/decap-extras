@@ -1,5 +1,11 @@
 # @allejo/decap-extras
 
+> [!WARNING]
+>
+> This is an experimental package in early development. I'm currently dog feeding this project in my own projects and am constantly improving the API as I discover better patterns.
+>
+> See my [nextjs-decap-typescript-template](https://github.com/allejo/nextjs-decap-typescript-template) repository for a real-world example of how to use this package in a Next.js project.
+
 A TypeScript utility library for [Decap CMS](https://decapcms.org/) that does two things:
 
 1. **Widget factory functions** — type-safe helpers for building Decap CMS field configuration objects instead of writing raw object literals by hand.
