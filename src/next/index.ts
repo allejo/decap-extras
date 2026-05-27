@@ -21,17 +21,37 @@ import path from 'node:path';
  *     across every requested page.
  */
 export function getCssFilesFromManifest(env: string, pages: string[]) {
-	const manifestPath =
-		env === 'development'
-			? path.join(process.cwd(), '.next', 'dev', 'build-manifest.json')
-			: path.join(process.cwd(), '.next', 'build-manifest.json');
-	const buildManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+	const devManifestPath = path.join(
+		process.cwd(),
+		'.next',
+		'dev',
+		'build-manifest.json',
+	);
+	const manifestPath = path.join(process.cwd(), '.next', 'build-manifest.json');
+
+	const devBuildManifest = fs.existsSync(devManifestPath)
+		? JSON.parse(fs.readFileSync(devManifestPath, 'utf8'))
+		: null;
+	const buildManifest = fs.existsSync(manifestPath)
+		? JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+		: null;
 
 	const allCssFiles: Record<string, string[]> = {};
 	const flattenedCssFilesSet = new Set<string>();
 
 	pages.forEach((page) => {
-		buildManifest?.pages[page]
+		const assets: string[] | undefined =
+			env === 'production'
+				? buildManifest?.pages[page]
+				: (devBuildManifest?.pages[page] ?? buildManifest?.pages[page]);
+
+		if (!assets) {
+			throw new Error(
+				`No manifest found for ${page}. Ensure "next build" has been run at least once.`,
+			);
+		}
+
+		assets
 			.filter((file: string) => file.endsWith('.css'))
 			.forEach((file: string) => {
 				if (!allCssFiles[page]) {
