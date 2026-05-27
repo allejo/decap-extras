@@ -4,7 +4,7 @@ import type {
 	CmsWidgetControlProps,
 	CmsWidgetPreviewProps,
 } from 'decap-cms-core';
-import { ComponentClass, ComponentType, useEffect } from 'react';
+import { ComponentType, useEffect } from 'react';
 
 /**
  * Props for {@link DecapInstance}.
@@ -78,11 +78,11 @@ export interface DecapInstanceProps {
 			/**
 			 * Widget editor component used in the Decap entry form.
 			 */
-			control: ComponentClass<CmsWidgetControlProps<unknown>>;
+			control: ComponentType<CmsWidgetControlProps>;
 			/**
 			 * Widget preview component used in Decap preview rendering.
 			 */
-			preview: ComponentType<CmsWidgetPreviewProps<unknown>>;
+			preview: ComponentType<CmsWidgetPreviewProps>;
 		}
 	>;
 }

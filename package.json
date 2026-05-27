@@ -1,6 +1,6 @@
 {
 	"name": "@allejo/decap-extras",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A TypeScript utility library for Decap CMS with utility types to derive types from Decap CMS configuration files.",
 	"keywords": [
 		"decapcms"
