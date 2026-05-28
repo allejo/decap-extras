@@ -47,21 +47,6 @@ export function imageWidget<T extends string>(
 		name,
 		widget: 'image',
 		...(options ?? {}),
-		media_library: {
-			name: 'cloudinary',
-			config: {
-				default_transformations: [
-					[
-						{
-							fetch_format: 'auto',
-							width: 300,
-							quality: 'auto',
-							crop: 'scale',
-						},
-					],
-				],
-			},
-		},
 	} as const satisfies CmsField;
 }
 

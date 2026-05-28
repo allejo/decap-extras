@@ -97,7 +97,7 @@ const tagObjectsField = listWidget('Tag Objects', 'tagObjects', [
 
 #### Image widget
 
-`imageWidget` is pre-configured with [Cloudinary](https://cloudinary.com/) as the media library, with default transformations (`fetch_format: auto`, `quality: auto`, `width: 300`, `crop: scale`). You can override these via the `options` parameter.
+To pass a default transformation (supported by services like Cloudinary), use the `opts` parameter to pass a `media_library` configuration.
 
 ```ts
 const heroField = imageWidget('Hero Image', 'hero');
